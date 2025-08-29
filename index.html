@@ -2,57 +2,58 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplikasi Absensi Siswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
-<body class="bg-gray-100 p-6 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 p-4 sm:p-6 flex flex-col items-center justify-center min-h-screen">
 
-    <div id="login-container" class="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full">
-        <h1 class="text-2xl font-bold mb-6 text-center">🔐 Login Absensi Siswa</h1>
+    <div id="login-container" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl max-w-sm w-full">
+        <h1 class="text-xl sm:text-2xl font-bold mb-6 text-center">🔐 Login Absensi Siswa</h1>
         <div class="mb-4">
             <label for="username" class="block text-gray-700 font-semibold mb-2">Username</label>
-            <input id="username" type="text" placeholder="Masukkan username" class="border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input id="username" type="text" placeholder="Masukkan username" class="border p-2 sm:p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="mb-6">
             <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
-            <input id="password" type="password" placeholder="Masukkan password" class="border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input id="password" type="password" placeholder="Masukkan password" class="border p-2 sm:p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <button onclick="handleLogin()" class="bg-blue-600 text-white px-4 py-3 rounded-lg shadow w-full font-semibold hover:bg-blue-700 transition-colors">Masuk</button>
         <p id="login-message" class="text-red-500 text-sm mt-4 text-center hidden">Username atau password salah.</p>
     </div>
 
-    <div id="app-container" class="hidden max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
-        <h1 class="text-2xl font-bold mb-4 text-center">📚 Aplikasi Absensi Siswa</h1>
+    <div id="app-container" class="hidden max-w-7xl w-full mx-auto bg-white p-4 sm:p-6 rounded-2xl shadow-xl">
+        <h1 class="text-xl sm:text-2xl font-bold mb-4 text-center">📚 Aplikasi Absensi Siswa</h1>
 
         <div class="mb-6">
-            <h2 id="formTitle" class="text-xl font-semibold mb-2">Tambah Siswa</h2>
-            <div class="grid grid-cols-4 gap-4">
-                <input id="nis" type="text" placeholder="NIS" class="border p-2 rounded w-full">
-                <input id="nama" type="text" placeholder="Nama" class="border p-2 rounded w-full">
-                <input id="kelas" type="text" placeholder="Kelas" class="border p-2 rounded w-full">
-                <input id="mapel" type="text" placeholder="Mata Pelajaran" class="border p-2 rounded w-full">
+            <h2 id="formTitle" class="text-lg sm:text-xl font-semibold mb-2">Tambah Siswa</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <input id="nis" type="text" placeholder="NIS" class="border p-2 rounded-lg w-full">
+                <input id="nama" type="text" placeholder="Nama" class="border p-2 rounded-lg w-full">
+                <input id="kelas" type="text" placeholder="Kelas" class="border p-2 rounded-lg w-full">
+                <input id="mapel" type="text" placeholder="Mata Pelajaran" class="border p-2 rounded-lg w-full">
             </div>
-            <div class="mt-3 flex gap-2">
-                <button onclick="tambahSiswa()" id="btnTambah" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">Tambah</button>
-                <button onclick="updateSiswa()" id="btnUpdate" class="hidden bg-yellow-600 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-700">Update</button>
-                <button onclick="batalEdit()" id="btnBatal" class="hidden bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700">Batal</button>
+            <div class="mt-3 flex flex-col sm:flex-row gap-2">
+                <button onclick="tambahSiswa()" id="btnTambah" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 w-full sm:w-auto">Tambah</button>
+                <button onclick="updateSiswa()" id="btnUpdate" class="hidden bg-yellow-600 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-700 w-full sm:w-auto">Update</button>
+                <button onclick="batalEdit()" id="btnBatal" class="hidden bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700 w-full sm:w-auto">Batal</button>
             </div>
         </div>
 
-        <div class="flex justify-between items-center mb-4">
-            <input id="searchInput" type="text" placeholder="🔍 Cari nama / NIS / kelas..." onkeyup="tampilkanData()" class="border p-2 rounded w-1/2">
-            <button onclick="resetData()" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700">♻ Reset Data</button>
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+            <input id="searchInput" type="text" placeholder="🔍 Cari nama / NIS / kelas..." onkeyup="tampilkanData()" class="border p-2 rounded-lg w-full sm:w-1/2">
+            <button onclick="resetData()" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 w-full sm:w-auto">♻ Reset Data</button>
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-gray-200 cursor-pointer">
+                    <tr class="bg-gray-200 cursor-pointer text-xs sm:text-base">
                         <th onclick="sortTable('nis')" class="border p-2">NIS ⬍</th>
                         <th onclick="sortTable('nama')" class="border p-2">Nama ⬍</th>
-                        <th onclick="sortTable('kelas')" class="border p-2">Kelas ⬍</th>
-                        <th onclick="sortTable('mapel')" class="border p-2">Mapel ⬍</th>
+                        <th onclick="sortTable('kelas')" class="border p-2 hidden md:table-cell">Kelas ⬍</th>
+                        <th onclick="sortTable('mapel')" class="border p-2 hidden lg:table-cell">Mapel ⬍</th>
                         <th class="border p-2 text-center">Sakit</th>
                         <th class="border p-2 text-center">Izin</th>
                         <th class="border p-2 text-center">Alpa</th>
@@ -63,12 +64,16 @@
             </table>
         </div>
 
-        <div class="mt-4 text-right">
+        <div class="mt-4 text-center sm:text-right">
             <button onclick="exportExcel()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">📥 Export Excel</button>
         </div>
     </div>
 
     <script>
+        // --- Skrip JavaScript Anda yang sudah ada di sini ---
+        // (handleLogin, initializeApp, tambahSiswa, editSiswa, updateSiswa, batalEdit, hapusSiswa, resetData, updateAbsensi, tampilkanData, sortTable, clearForm, exportExcel)
+        // Pastikan semua fungsi ini ada di dalam blok <script> Anda.
+
         function handleLogin() {
             const usernameInput = document.getElementById("username").value;
             const passwordInput = document.getElementById("password").value;
@@ -104,15 +109,8 @@
                 db = event.target.result;
                 tampilkanData();
             };
-
-            // The rest of your existing functions go here
-            // (tambahSiswa, editSiswa, updateSiswa, batalEdit, hapusSiswa, resetData, updateAbsensi, tampilkanData, sortTable, clearForm, exportExcel)
-            // It's a good practice to move them inside this function scope,
-            // or ensure they are accessible after the app is initialized.
-            // For simplicity, I'll assume they are defined globally or are accessible.
         }
 
-        // Place all your existing script functions here
         let db, sortField = "nis", sortAsc = true, editNIS = null;
         let request = indexedDB.open("AbsensiDB", 2);
 
@@ -126,8 +124,6 @@
 
         request.onsuccess = function(event) {
             db = event.target.result;
-            // The initial data display is now moved to `initializeApp`
-            // so we don't need to call it here.
         };
 
         // Tambah siswa
@@ -251,8 +247,8 @@
                     let row = `<tr class="border-b hover:bg-gray-50">
                         <td class="border p-2">${siswa.nis}</td>
                         <td class="border p-2">${siswa.nama}</td>
-                        <td class="border p-2">${siswa.kelas}</td>
-                        <td class="border p-2">${siswa.mapel}</td>
+                        <td class="border p-2 hidden md:table-cell">${siswa.kelas}</td>
+                        <td class="border p-2 hidden lg:table-cell">${siswa.mapel}</td>
                         <td class="border p-2 text-center">${siswa.sakit}</td>
                         <td class="border p-2 text-center">${siswa.izin}</td>
                         <td class="border p-2 text-center">${siswa.alpa}</td>
@@ -302,43 +298,43 @@
             };
         }
 
-      // Matikan klik kanan
-    document.addEventListener("contextmenu", function(e){
-      e.preventDefault();
-    });
+        // Matikan klik kanan
+        document.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+        });
 
-    // Blokir shortcut tertentu
-    document.addEventListener("keydown", function(e) {
-      // Ctrl+U (View Source)
-      if (e.ctrlKey && e.key.toLowerCase() === "u") {
-        e.preventDefault();
-      }
+        // Blokir shortcut tertentu
+        document.addEventListener("keydown", function(e) {
+            // Ctrl+U (View Source)
+            if (e.ctrlKey && e.key.toLowerCase() === "u") {
+                e.preventDefault();
+            }
 
-      // Ctrl+Shift+I (DevTools)
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
-        e.preventDefault();
-      }
+            // Ctrl+Shift+I (DevTools)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+                e.preventDefault();
+            }
 
-      // Ctrl+Shift+J (Console)
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") {
-        e.preventDefault();
-      }
+            // Ctrl+Shift+J (Console)
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") {
+                e.preventDefault();
+            }
 
-      // Ctrl+S (Save Page)
-      if (e.ctrlKey && e.key.toLowerCase() === "s") {
-        e.preventDefault();
-      }
+            // Ctrl+S (Save Page)
+            if (e.ctrlKey && e.key.toLowerCase() === "s") {
+                e.preventDefault();
+            }
 
-      // F12 (DevTools)
-      if (e.key === "F12") {
-        e.preventDefault();
-      }
+            // F12 (DevTools)
+            if (e.key === "F12") {
+                e.preventDefault();
+            }
 
-      // Ctrl+C (Copy)
-      if (e.ctrlKey && e.key.toLowerCase() === "c") {
-        e.preventDefault();
-      }
-    });
+            // Ctrl+C (Copy)
+            if (e.ctrlKey && e.key.toLowerCase() === "c") {
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
