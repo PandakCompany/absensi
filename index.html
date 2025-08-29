@@ -1,269 +1,344 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Aplikasi Absensi Siswa</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Aplikasi Absensi Siswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <div class="max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
-    <h1 class="text-2xl font-bold mb-4 text-center">📚 Aplikasi Absensi Siswa</h1>
+<body class="bg-gray-100 p-6 flex items-center justify-center min-h-screen">
 
-    <!-- Form Tambah/Edit Siswa -->
-    <div class="mb-6">
-      <h2 id="formTitle" class="text-xl font-semibold mb-2">Tambah Siswa</h2>
-      <div class="grid grid-cols-4 gap-4">
-        <input id="nis" type="text" placeholder="NIS" class="border p-2 rounded w-full">
-        <input id="nama" type="text" placeholder="Nama" class="border p-2 rounded w-full">
-        <input id="kelas" type="text" placeholder="Kelas" class="border p-2 rounded w-full">
-        <input id="mapel" type="text" placeholder="Mata Pelajaran" class="border p-2 rounded w-full">
-      </div>
-      <div class="mt-3 flex gap-2">
-        <button onclick="tambahSiswa()" id="btnTambah" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">Tambah</button>
-        <button onclick="updateSiswa()" id="btnUpdate" class="hidden bg-yellow-600 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-700">Update</button>
-        <button onclick="batalEdit()" id="btnBatal" class="hidden bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700">Batal</button>
-      </div>
+    <div id="login-container" class="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full">
+        <h1 class="text-2xl font-bold mb-6 text-center">🔐 Login Absensi Siswa</h1>
+        <div class="mb-4">
+            <label for="username" class="block text-gray-700 font-semibold mb-2">Username</label>
+            <input id="username" type="text" placeholder="Masukkan username" class="border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="mb-6">
+            <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+            <input id="password" type="password" placeholder="Masukkan password" class="border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button onclick="handleLogin()" class="bg-blue-600 text-white px-4 py-3 rounded-lg shadow w-full font-semibold hover:bg-blue-700 transition-colors">Masuk</button>
+        <p id="login-message" class="text-red-500 text-sm mt-4 text-center hidden">Username atau password salah.</p>
     </div>
 
-    <!-- Search & Reset -->
-    <div class="flex justify-between items-center mb-4">
-      <input id="searchInput" type="text" placeholder="🔍 Cari nama / NIS / kelas..." onkeyup="tampilkanData()" class="border p-2 rounded w-1/2">
-      <button onclick="resetData()" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700">♻ Reset Data</button>
+    <div id="app-container" class="hidden max-w-7xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
+        <h1 class="text-2xl font-bold mb-4 text-center">📚 Aplikasi Absensi Siswa</h1>
+
+        <div class="mb-6">
+            <h2 id="formTitle" class="text-xl font-semibold mb-2">Tambah Siswa</h2>
+            <div class="grid grid-cols-4 gap-4">
+                <input id="nis" type="text" placeholder="NIS" class="border p-2 rounded w-full">
+                <input id="nama" type="text" placeholder="Nama" class="border p-2 rounded w-full">
+                <input id="kelas" type="text" placeholder="Kelas" class="border p-2 rounded w-full">
+                <input id="mapel" type="text" placeholder="Mata Pelajaran" class="border p-2 rounded w-full">
+            </div>
+            <div class="mt-3 flex gap-2">
+                <button onclick="tambahSiswa()" id="btnTambah" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">Tambah</button>
+                <button onclick="updateSiswa()" id="btnUpdate" class="hidden bg-yellow-600 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-700">Update</button>
+                <button onclick="batalEdit()" id="btnBatal" class="hidden bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700">Batal</button>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-4">
+            <input id="searchInput" type="text" placeholder="🔍 Cari nama / NIS / kelas..." onkeyup="tampilkanData()" class="border p-2 rounded w-1/2">
+            <button onclick="resetData()" class="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700">♻ Reset Data</button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-200 cursor-pointer">
+                        <th onclick="sortTable('nis')" class="border p-2">NIS ⬍</th>
+                        <th onclick="sortTable('nama')" class="border p-2">Nama ⬍</th>
+                        <th onclick="sortTable('kelas')" class="border p-2">Kelas ⬍</th>
+                        <th onclick="sortTable('mapel')" class="border p-2">Mapel ⬍</th>
+                        <th class="border p-2 text-center">Sakit</th>
+                        <th class="border p-2 text-center">Izin</th>
+                        <th class="border p-2 text-center">Alpa</th>
+                        <th class="border p-2 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelSiswa"></tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 text-right">
+            <button onclick="exportExcel()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">📥 Export Excel</button>
+        </div>
     </div>
 
-    <!-- Tabel Absensi -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-gray-200 cursor-pointer">
-            <th onclick="sortTable('nis')" class="border p-2">NIS ⬍</th>
-            <th onclick="sortTable('nama')" class="border p-2">Nama ⬍</th>
-            <th onclick="sortTable('kelas')" class="border p-2">Kelas ⬍</th>
-            <th onclick="sortTable('mapel')" class="border p-2">Mapel ⬍</th>
-            <th class="border p-2 text-center">Sakit</th>
-            <th class="border p-2 text-center">Izin</th>
-            <th class="border p-2 text-center">Alpa</th>
-            <th class="border p-2 text-center">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="tabelSiswa"></tbody>
-      </table>
-    </div>
+    <script>
+        function handleLogin() {
+            const usernameInput = document.getElementById("username").value;
+            const passwordInput = document.getElementById("password").value;
+            const loginMessage = document.getElementById("login-message");
 
-    <!-- Tombol Export -->
-    <div class="mt-4 text-right">
-      <button onclick="exportExcel()" class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700">📥 Export Excel</button>
-    </div>
-  </div>
+            // Hardcoded username and password. Change these as needed.
+            const correctUsername = "saya";
+            const correctPassword = "!@#$%";
 
-<script>
-  let db, sortField = "nis", sortAsc = true, editNIS = null;
-  let request = indexedDB.open("AbsensiDB", 2);
+            if (usernameInput === correctUsername && passwordInput === correctPassword) {
+                document.getElementById("login-container").classList.add("hidden");
+                document.getElementById("app-container").classList.remove("hidden");
+                loginMessage.classList.add("hidden");
+                initializeApp(); // Initialize the app after successful login
+            } else {
+                loginMessage.classList.remove("hidden");
+            }
+        }
 
-  request.onupgradeneeded = function(event) {
-    db = event.target.result;
-    if (!db.objectStoreNames.contains("siswa")) {
-      let store = db.createObjectStore("siswa", { keyPath: "nis" });
-      store.createIndex("nama", "nama", { unique: false });
-    }
-  };
+        function initializeApp() {
+            let db, sortField = "nis", sortAsc = true, editNIS = null;
+            let request = indexedDB.open("AbsensiDB", 2);
 
-  request.onsuccess = function(event) {
-    db = event.target.result;
-    tampilkanData();
-  };
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains("siswa")) {
+                    let store = db.createObjectStore("siswa", { keyPath: "nis" });
+                    store.createIndex("nama", "nama", { unique: false });
+                }
+            };
 
-  // Tambah siswa
-  function tambahSiswa() {
-    let nis = document.getElementById("nis").value;
-    let nama = document.getElementById("nama").value;
-    let kelas = document.getElementById("kelas").value;
-    let mapel = document.getElementById("mapel").value;
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                tampilkanData();
+            };
 
-    if (!nis || !nama) {
-      alert("NIS dan Nama wajib diisi!");
-      return;
-    }
+            // The rest of your existing functions go here
+            // (tambahSiswa, editSiswa, updateSiswa, batalEdit, hapusSiswa, resetData, updateAbsensi, tampilkanData, sortTable, clearForm, exportExcel)
+            // It's a good practice to move them inside this function scope,
+            // or ensure they are accessible after the app is initialized.
+            // For simplicity, I'll assume they are defined globally or are accessible.
+        }
 
-    let tx = db.transaction("siswa", "readwrite");
-    let store = tx.objectStore("siswa");
-    let data = { nis, nama, kelas, mapel, sakit: 0, izin: 0, alpa: 0 };
-    store.put(data);
+        // Place all your existing script functions here
+        let db, sortField = "nis", sortAsc = true, editNIS = null;
+        let request = indexedDB.open("AbsensiDB", 2);
 
-    tx.oncomplete = () => {
-      tampilkanData();
-      clearForm();
-    };
-  }
+        request.onupgradeneeded = function(event) {
+            db = event.target.result;
+            if (!db.objectStoreNames.contains("siswa")) {
+                let store = db.createObjectStore("siswa", { keyPath: "nis" });
+                store.createIndex("nama", "nama", { unique: false });
+            }
+        };
 
-  // Update siswa
-  function editSiswa(nis) {
-    let tx = db.transaction("siswa", "readonly");
-    let store = tx.objectStore("siswa");
-    let req = store.get(nis);
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            // The initial data display is now moved to `initializeApp`
+            // so we don't need to call it here.
+        };
 
-    req.onsuccess = function() {
-      let siswa = req.result;
-      document.getElementById("nis").value = siswa.nis;
-      document.getElementById("nis").disabled = true;
-      document.getElementById("nama").value = siswa.nama;
-      document.getElementById("kelas").value = siswa.kelas;
-      document.getElementById("mapel").value = siswa.mapel;
+        // Tambah siswa
+        function tambahSiswa() {
+            let nis = document.getElementById("nis").value;
+            let nama = document.getElementById("nama").value;
+            let kelas = document.getElementById("kelas").value;
+            let mapel = document.getElementById("mapel").value;
+            if (!nis || !nama) {
+                alert("NIS dan Nama wajib diisi!");
+                return;
+            }
+            let tx = db.transaction("siswa", "readwrite");
+            let store = tx.objectStore("siswa");
+            let data = { nis, nama, kelas, mapel, sakit: 0, izin: 0, alpa: 0 };
+            store.put(data);
+            tx.oncomplete = () => {
+                tampilkanData();
+                clearForm();
+            };
+        }
 
-      document.getElementById("btnTambah").classList.add("hidden");
-      document.getElementById("btnUpdate").classList.remove("hidden");
-      document.getElementById("btnBatal").classList.remove("hidden");
-      document.getElementById("formTitle").innerText = "Edit Siswa";
+        // Update siswa
+        function editSiswa(nis) {
+            let tx = db.transaction("siswa", "readonly");
+            let store = tx.objectStore("siswa");
+            let req = store.get(nis);
+            req.onsuccess = function() {
+                let siswa = req.result;
+                document.getElementById("nis").value = siswa.nis;
+                document.getElementById("nis").disabled = true;
+                document.getElementById("nama").value = siswa.nama;
+                document.getElementById("kelas").value = siswa.kelas;
+                document.getElementById("mapel").value = siswa.mapel;
+                document.getElementById("btnTambah").classList.add("hidden");
+                document.getElementById("btnUpdate").classList.remove("hidden");
+                document.getElementById("btnBatal").classList.remove("hidden");
+                document.getElementById("formTitle").innerText = "Edit Siswa";
+                editNIS = siswa.nis;
+            };
+        }
 
-      editNIS = siswa.nis;
-    };
-  }
+        function updateSiswa() {
+            let tx = db.transaction("siswa", "readwrite");
+            let store = tx.objectStore("siswa");
+            let req = store.get(editNIS);
+            req.onsuccess = function() {
+                let siswa = req.result;
+                siswa.nama = document.getElementById("nama").value;
+                siswa.kelas = document.getElementById("kelas").value;
+                siswa.mapel = document.getElementById("mapel").value;
+                store.put(siswa);
+                tampilkanData();
+                batalEdit();
+            };
+        }
 
-  function updateSiswa() {
-    let tx = db.transaction("siswa", "readwrite");
-    let store = tx.objectStore("siswa");
-    let req = store.get(editNIS);
+        function batalEdit() {
+            clearForm();
+            document.getElementById("btnTambah").classList.remove("hidden");
+            document.getElementById("btnUpdate").classList.add("hidden");
+            document.getElementById("btnBatal").classList.add("hidden");
+            document.getElementById("formTitle").innerText = "Tambah Siswa";
+            document.getElementById("nis").disabled = false;
+            editNIS = null;
+        }
 
-    req.onsuccess = function() {
-      let siswa = req.result;
-      siswa.nama = document.getElementById("nama").value;
-      siswa.kelas = document.getElementById("kelas").value;
-      siswa.mapel = document.getElementById("mapel").value;
+        // Hapus siswa
+        function hapusSiswa(nis) {
+            if (!confirm("Yakin ingin menghapus siswa ini?")) return;
+            let tx = db.transaction("siswa", "readwrite");
+            tx.objectStore("siswa").delete(nis);
+            tx.oncomplete = tampilkanData;
+        }
 
-      store.put(siswa);
-      tampilkanData();
-      batalEdit();
-    };
-  }
+        // Reset semua data
+        function resetData() {
+            if (!confirm("Hapus semua data absensi?")) return;
+            let tx = db.transaction("siswa", "readwrite");
+            let store = tx.objectStore("siswa");
+            let clearReq = store.clear();
+            clearReq.onsuccess = tampilkanData;
+        }
 
-  function batalEdit() {
-    clearForm();
-    document.getElementById("btnTambah").classList.remove("hidden");
-    document.getElementById("btnUpdate").classList.add("hidden");
-    document.getElementById("btnBatal").classList.add("hidden");
-    document.getElementById("formTitle").innerText = "Tambah Siswa";
-    document.getElementById("nis").disabled = false;
-    editNIS = null;
-  }
+        // Update absensi
+        function updateAbsensi(nis, tipe) {
+            let tx = db.transaction("siswa", "readwrite");
+            let store = tx.objectStore("siswa");
+            let request = store.get(nis);
+            request.onsuccess = function() {
+                let siswa = request.result;
+                siswa[tipe]++;
+                store.put(siswa);
+                tampilkanData();
+            };
+        }
 
-  // Hapus siswa
-  function hapusSiswa(nis) {
-    if (!confirm("Yakin ingin menghapus siswa ini?")) return;
-    let tx = db.transaction("siswa", "readwrite");
-    tx.objectStore("siswa").delete(nis);
-    tx.oncomplete = tampilkanData;
-  }
+        // Tampilkan data
+        function tampilkanData() {
+            let tx = db.transaction("siswa", "readonly");
+            let store = tx.objectStore("siswa");
+            let request = store.getAll();
+            request.onsuccess = function() {
+                let siswaList = request.result;
+                let keyword = document.getElementById("searchInput").value.toLowerCase();
+                if (keyword) {
+                    siswaList = siswaList.filter(s =>
+                        s.nis.toLowerCase().includes(keyword) ||
+                        s.nama.toLowerCase().includes(keyword) ||
+                        s.kelas.toLowerCase().includes(keyword)
+                    );
+                }
+                siswaList.sort((a, b) => {
+                    let valA = a[sortField].toString().toLowerCase();
+                    let valB = b[sortField].toString().toLowerCase();
+                    return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                });
+                let tbody = document.getElementById("tabelSiswa");
+                tbody.innerHTML = "";
+                siswaList.forEach(siswa => {
+                    let row = `<tr class="border-b hover:bg-gray-50">
+                        <td class="border p-2">${siswa.nis}</td>
+                        <td class="border p-2">${siswa.nama}</td>
+                        <td class="border p-2">${siswa.kelas}</td>
+                        <td class="border p-2">${siswa.mapel}</td>
+                        <td class="border p-2 text-center">${siswa.sakit}</td>
+                        <td class="border p-2 text-center">${siswa.izin}</td>
+                        <td class="border p-2 text-center">${siswa.alpa}</td>
+                        <td class="border p-2 text-center flex gap-1 justify-center">
+                            <button onclick="updateAbsensi('${siswa.nis}', 'sakit')" class="bg-yellow-500 text-white px-2 py-1 rounded">S</button>
+                            <button onclick="updateAbsensi('${siswa.nis}', 'izin')" class="bg-blue-500 text-white px-2 py-1 rounded">I</button>
+                            <button onclick="updateAbsensi('${siswa.nis}', 'alpa')" class="bg-red-500 text-white px-2 py-1 rounded">A</button>
+                            <button onclick="editSiswa('${siswa.nis}')" class="bg-gray-500 text-white px-2 py-1 rounded">✏</button>
+                            <button onclick="hapusSiswa('${siswa.nis}')" class="bg-black text-white px-2 py-1 rounded">🗑</button>
+                        </td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            };
+        }
 
-  // Reset semua data
-  function resetData() {
-    if (!confirm("Hapus semua data absensi?")) return;
-    let tx = db.transaction("siswa", "readwrite");
-    let store = tx.objectStore("siswa");
-    let clearReq = store.clear();
-    clearReq.onsuccess = tampilkanData;
-  }
+        // Sorting fungsi
+        function sortTable(field) {
+            sortAsc = (sortField === field) ? !sortAsc : true;
+            sortField = field;
+            tampilkanData();
+        }
 
-  // Update absensi
-  function updateAbsensi(nis, tipe) {
-    let tx = db.transaction("siswa", "readwrite");
-    let store = tx.objectStore("siswa");
-    let request = store.get(nis);
+        // Clear form
+        function clearForm() {
+            document.getElementById("nis").value = "";
+            document.getElementById("nama").value = "";
+            document.getElementById("kelas").value = "";
+            document.getElementById("mapel").value = "";
+        }
 
-    request.onsuccess = function() {
-      let siswa = request.result;
-      siswa[tipe]++;
-      store.put(siswa);
-      tampilkanData();
-    };
-  }
+        // Export Excel
+        function exportExcel() {
+            let tx = db.transaction("siswa", "readonly");
+            let store = tx.objectStore("siswa");
+            let request = store.getAll();
+            request.onsuccess = function() {
+                let siswaList = request.result;
+                let data = siswaList.map(s => ({
+                    NIS: s.nis, Nama: s.nama, Kelas: s.kelas, Mapel: s.mapel,
+                    Sakit: s.sakit, Izin: s.izin, Alpa: s.alpa
+                }));
+                let ws = XLSX.utils.json_to_sheet(data);
+                let wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Absensi");
+                XLSX.writeFile(wb, "Absensi_Siswa.xlsx");
+            };
+        }
 
-  // Tampilkan data
-  function tampilkanData() {
-    let tx = db.transaction("siswa", "readonly");
-    let store = tx.objectStore("siswa");
-    let request = store.getAll();
+      // Matikan klik kanan
+    document.addEventListener("contextmenu", function(e){
+      e.preventDefault();
+    });
 
-    request.onsuccess = function() {
-      let siswaList = request.result;
-
-      // Filter pencarian
-      let keyword = document.getElementById("searchInput").value.toLowerCase();
-      if (keyword) {
-        siswaList = siswaList.filter(s =>
-          s.nis.toLowerCase().includes(keyword) ||
-          s.nama.toLowerCase().includes(keyword) ||
-          s.kelas.toLowerCase().includes(keyword)
-        );
+    // Blokir shortcut tertentu
+    document.addEventListener("keydown", function(e) {
+      // Ctrl+U (View Source)
+      if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
       }
 
-      // Sorting
-      siswaList.sort((a, b) => {
-        let valA = a[sortField].toString().toLowerCase();
-        let valB = b[sortField].toString().toLowerCase();
-        return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      });
+      // Ctrl+Shift+I (DevTools)
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+      }
 
-      let tbody = document.getElementById("tabelSiswa");
-      tbody.innerHTML = "";
-      siswaList.forEach(siswa => {
-        let row = `
-          <tr class="border-b hover:bg-gray-50">
-            <td class="border p-2">${siswa.nis}</td>
-            <td class="border p-2">${siswa.nama}</td>
-            <td class="border p-2">${siswa.kelas}</td>
-            <td class="border p-2">${siswa.mapel}</td>
-            <td class="border p-2 text-center">${siswa.sakit}</td>
-            <td class="border p-2 text-center">${siswa.izin}</td>
-            <td class="border p-2 text-center">${siswa.alpa}</td>
-            <td class="border p-2 text-center flex gap-1 justify-center">
-              <button onclick="updateAbsensi('${siswa.nis}', 'sakit')" class="bg-yellow-500 text-white px-2 py-1 rounded">S</button>
-              <button onclick="updateAbsensi('${siswa.nis}', 'izin')" class="bg-blue-500 text-white px-2 py-1 rounded">I</button>
-              <button onclick="updateAbsensi('${siswa.nis}', 'alpa')" class="bg-red-500 text-white px-2 py-1 rounded">A</button>
-              <button onclick="editSiswa('${siswa.nis}')" class="bg-gray-500 text-white px-2 py-1 rounded">✏</button>
-              <button onclick="hapusSiswa('${siswa.nis}')" class="bg-black text-white px-2 py-1 rounded">🗑</button>
-            </td>
-          </tr>
-        `;
-        tbody.innerHTML += row;
-      });
-    };
-  }
+      // Ctrl+Shift+J (Console)
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") {
+        e.preventDefault();
+      }
 
-  // Sorting fungsi
-  function sortTable(field) {
-    sortAsc = (sortField === field) ? !sortAsc : true;
-    sortField = field;
-    tampilkanData();
-  }
+      // Ctrl+S (Save Page)
+      if (e.ctrlKey && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+      }
 
-  // Clear form
-  function clearForm() {
-    document.getElementById("nis").value = "";
-    document.getElementById("nama").value = "";
-    document.getElementById("kelas").value = "";
-    document.getElementById("mapel").value = "";
-  }
+      // F12 (DevTools)
+      if (e.key === "F12") {
+        e.preventDefault();
+      }
 
-  // Export Excel
-  function exportExcel() {
-    let tx = db.transaction("siswa", "readonly");
-    let store = tx.objectStore("siswa");
-    let request = store.getAll();
-
-    request.onsuccess = function() {
-      let siswaList = request.result;
-      let data = siswaList.map(s => ({
-        NIS: s.nis, Nama: s.nama, Kelas: s.kelas, Mapel: s.mapel,
-        Sakit: s.sakit, Izin: s.izin, Alpa: s.alpa
-      }));
-
-      let ws = XLSX.utils.json_to_sheet(data);
-      let wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Absensi");
-      XLSX.writeFile(wb, "Absensi_Siswa.xlsx");
-    };
-  }
-</script>
+      // Ctrl+C (Copy)
+      if (e.ctrlKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+      }
+    });
+    </script>
 </body>
 </html>
