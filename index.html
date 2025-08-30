@@ -244,20 +244,20 @@
                 let tbody = document.getElementById("tabelSiswa");
                 tbody.innerHTML = "";
                 siswaList.forEach(siswa => {
-                    let row = `<tr class="border-b hover:bg-gray-50">
-                        <td class="border p-2">${siswa.nis}</td>
-                        <td class="border p-2">${siswa.nama}</td>
-                        <td class="border p-2 hidden md:table-cell">${siswa.kelas}</td>
-                        <td class="border p-2 hidden lg:table-cell">${siswa.mapel}</td>
-                        <td class="border p-2 text-center">${siswa.sakit}</td>
-                        <td class="border p-2 text-center">${siswa.izin}</td>
-                        <td class="border p-2 text-center">${siswa.alpa}</td>
-                        <td class="border p-2 text-center flex gap-1 justify-center">
+                    let row = `<tr class="border-b hover:bg-gray-50 text-xs sm:text-base">
+                        <td class="border p-2 w-1/5">${siswa.nis}</td>
+                        <td class="border p-2 w-2/5">${siswa.nama}</td>
+                        <td class="border p-2 w-1/5">${siswa.kelas}</td>
+                        <td class="border p-2 w-1/5">${siswa.mapel}</td>
+                        <td class="border p-2 text-center w-1/10">${siswa.sakit}</td>
+                        <td class="border p-2 text-center w-1/10">${siswa.izin}</td>
+                        <td class="border p-2 text-center w-1/10">${siswa.alpa}</td>
+                        <td class="border p-2 text-center flex flex-wrap gap-1 justify-center w-2/5">
                             <button onclick="updateAbsensi('${siswa.nis}', 'sakit')" class="bg-yellow-500 text-white px-2 py-1 rounded">S</button>
                             <button onclick="updateAbsensi('${siswa.nis}', 'izin')" class="bg-blue-500 text-white px-2 py-1 rounded">I</button>
                             <button onclick="updateAbsensi('${siswa.nis}', 'alpa')" class="bg-red-500 text-white px-2 py-1 rounded">A</button>
-                            <button onclick="editSiswa('${siswa.nis}')" class="bg-gray-500 text-white px-2 py-1 rounded">✏</button>
-                            <button onclick="hapusSiswa('${siswa.nis}')" class="bg-black text-white px-2 py-1 rounded">🗑</button>
+                            <button onclick="editSiswa('${siswa.nis}')" class="bg-gray-500 text-white px-2 py-1 rounded">✏️</button>
+                            <button onclick="hapusSiswa('${siswa.nis}')" class="bg-black text-white px-2 py-1 rounded">🗑️</button>
                         </td>
                     </tr>`;
                     tbody.innerHTML += row;
@@ -338,4 +338,3 @@
     </script>
 </body>
 </html>
-
