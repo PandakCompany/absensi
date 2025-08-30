@@ -70,16 +70,13 @@
     </div>
 
     <script>
-        // --- Skrip JavaScript Anda yang sudah ada di sini ---
-        // (handleLogin, initializeApp, tambahSiswa, editSiswa, updateSiswa, batalEdit, hapusSiswa, resetData, updateAbsensi, tampilkanData, sortTable, clearForm, exportExcel)
-        // Pastikan semua fungsi ini ada di dalam blok <script> Anda.
+        let db, sortField = "nis", sortAsc = true, editNIS = null;
 
         function handleLogin() {
             const usernameInput = document.getElementById("username").value;
             const passwordInput = document.getElementById("password").value;
             const loginMessage = document.getElementById("login-message");
 
-            // Hardcoded username and password. Change these as needed.
             const correctUsername = "saya";
             const correctPassword = "!@#$%";
 
@@ -87,14 +84,13 @@
                 document.getElementById("login-container").classList.add("hidden");
                 document.getElementById("app-container").classList.remove("hidden");
                 loginMessage.classList.add("hidden");
-                initializeApp(); // Initialize the app after successful login
+                initializeApp();
             } else {
                 loginMessage.classList.remove("hidden");
             }
         }
 
         function initializeApp() {
-            let db, sortField = "nis", sortAsc = true, editNIS = null;
             let request = indexedDB.open("AbsensiDB", 2);
 
             request.onupgradeneeded = function(event) {
@@ -109,29 +105,17 @@
                 db = event.target.result;
                 tampilkanData();
             };
+
+            request.onerror = function(event) {
+                console.error("IndexedDB error:", event.target.errorCode);
+            };
         }
 
-        let db, sortField = "nis", sortAsc = true, editNIS = null;
-        let request = indexedDB.open("AbsensiDB", 2);
-
-        request.onupgradeneeded = function(event) {
-            db = event.target.result;
-            if (!db.objectStoreNames.contains("siswa")) {
-                let store = db.createObjectStore("siswa", { keyPath: "nis" });
-                store.createIndex("nama", "nama", { unique: false });
-            }
-        };
-
-        request.onsuccess = function(event) {
-            db = event.target.result;
-        };
-
-        // Tambah siswa
         function tambahSiswa() {
-            let nis = document.getElementById("nis").value;
-            let nama = document.getElementById("nama").value;
-            let kelas = document.getElementById("kelas").value;
-            let mapel = document.getElementById("mapel").value;
+            let nis = document.getElementById("nis").value.trim();
+            let nama = document.getElementById("nama").value.trim();
+            let kelas = document.getElementById("kelas").value.trim();
+            let mapel = document.getElementById("mapel").value.trim();
             if (!nis || !nama) {
                 alert("NIS dan Nama wajib diisi!");
                 return;
@@ -146,7 +130,6 @@
             };
         }
 
-        // Update siswa
         function editSiswa(nis) {
             let tx = db.transaction("siswa", "readonly");
             let store = tx.objectStore("siswa");
@@ -191,7 +174,6 @@
             editNIS = null;
         }
 
-        // Hapus siswa
         function hapusSiswa(nis) {
             if (!confirm("Yakin ingin menghapus siswa ini?")) return;
             let tx = db.transaction("siswa", "readwrite");
@@ -199,7 +181,6 @@
             tx.oncomplete = tampilkanData;
         }
 
-        // Reset semua data
         function resetData() {
             if (!confirm("Hapus semua data absensi?")) return;
             let tx = db.transaction("siswa", "readwrite");
@@ -208,7 +189,6 @@
             clearReq.onsuccess = tampilkanData;
         }
 
-        // Update absensi
         function updateAbsensi(nis, tipe) {
             let tx = db.transaction("siswa", "readwrite");
             let store = tx.objectStore("siswa");
@@ -221,7 +201,6 @@
             };
         }
 
-        // Tampilkan data
         function tampilkanData() {
             let tx = db.transaction("siswa", "readonly");
             let store = tx.objectStore("siswa");
@@ -245,14 +224,14 @@
                 tbody.innerHTML = "";
                 siswaList.forEach(siswa => {
                     let row = `<tr class="border-b hover:bg-gray-50 text-xs sm:text-base">
-                        <td class="border p-2 w-1/5">${siswa.nis}</td>
-                        <td class="border p-2 w-2/5">${siswa.nama}</td>
-                        <td class="border p-2 w-1/5">${siswa.kelas}</td>
-                        <td class="border p-2 w-1/5">${siswa.mapel}</td>
-                        <td class="border p-2 text-center w-1/10">${siswa.sakit}</td>
-                        <td class="border p-2 text-center w-1/10">${siswa.izin}</td>
-                        <td class="border p-2 text-center w-1/10">${siswa.alpa}</td>
-                        <td class="border p-2 text-center flex flex-wrap gap-1 justify-center w-2/5">
+                        <td class="border p-2">${siswa.nis}</td>
+                        <td class="border p-2">${siswa.nama}</td>
+                        <td class="border p-2">${siswa.kelas}</td>
+                        <td class="border p-2">${siswa.mapel}</td>
+                        <td class="border p-2 text-center">${siswa.sakit}</td>
+                        <td class="border p-2 text-center">${siswa.izin}</td>
+                        <td class="border p-2 text-center">${siswa.alpa}</td>
+                        <td class="border p-2 text-center flex flex-wrap gap-1 justify-center">
                             <button onclick="updateAbsensi('${siswa.nis}', 'sakit')" class="bg-yellow-500 text-white px-2 py-1 rounded">S</button>
                             <button onclick="updateAbsensi('${siswa.nis}', 'izin')" class="bg-blue-500 text-white px-2 py-1 rounded">I</button>
                             <button onclick="updateAbsensi('${siswa.nis}', 'alpa')" class="bg-red-500 text-white px-2 py-1 rounded">A</button>
@@ -265,14 +244,12 @@
             };
         }
 
-        // Sorting fungsi
         function sortTable(field) {
             sortAsc = (sortField === field) ? !sortAsc : true;
             sortField = field;
             tampilkanData();
         }
 
-        // Clear form
         function clearForm() {
             document.getElementById("nis").value = "";
             document.getElementById("nama").value = "";
@@ -280,7 +257,6 @@
             document.getElementById("mapel").value = "";
         }
 
-        // Export Excel
         function exportExcel() {
             let tx = db.transaction("siswa", "readonly");
             let store = tx.objectStore("siswa");
@@ -298,42 +274,17 @@
             };
         }
 
-        // Matikan klik kanan
         document.addEventListener("contextmenu", function(e){
             e.preventDefault();
         });
 
-        // Blokir shortcut tertentu
         document.addEventListener("keydown", function(e) {
-            // Ctrl+U (View Source)
-            if (e.ctrlKey && e.key.toLowerCase() === "u") {
-                e.preventDefault();
-            }
-
-            // Ctrl+Shift+I (DevTools)
-            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") {
-                e.preventDefault();
-            }
-
-            // Ctrl+Shift+J (Console)
-            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") {
-                e.preventDefault();
-            }
-
-            // Ctrl+S (Save Page)
-            if (e.ctrlKey && e.key.toLowerCase() === "s") {
-                e.preventDefault();
-            }
-
-            // F12 (DevTools)
-            if (e.key === "F12") {
-                e.preventDefault();
-            }
-
-            // Ctrl+C (Copy)
-            if (e.ctrlKey && e.key.toLowerCase() === "c") {
-                e.preventDefault();
-            }
+            if (e.ctrlKey && e.key.toLowerCase() === "u") { e.preventDefault(); }
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") { e.preventDefault(); }
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") { e.preventDefault(); }
+            if (e.ctrlKey && e.key.toLowerCase() === "s") { e.preventDefault(); }
+            if (e.key === "F12") { e.preventDefault(); }
+            if (e.ctrlKey && e.key.toLowerCase() === "c") { e.preventDefault(); }
         });
     </script>
 </body>
